@@ -1,6 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.viewsets import ViewSet
 
 from profiles_api.serializers import HelloSerializer
 
@@ -13,7 +14,7 @@ class HelloApiView(APIView):
     def get(self, request, format=None):
         data = [
             'Django Rest Framework',
-            'API Example',
+            'APIView Example',
             'Test GET API Call'
         ]
         return Response({
@@ -53,3 +54,60 @@ class HelloApiView(APIView):
         return Response({
             'method': 'DELETE'
         })
+
+
+class HelloViewSet(ViewSet):
+    '''Test API ViewSet'''
+
+    serializer_class = HelloSerializer
+
+    def list(self, request):
+        data = [
+            'Django Rest Framework',
+            'ViewSet Example',
+            'Test API Call'
+        ]
+        return Response({
+            'message': 'Hello, I\'m the first ViewSet API call',
+            'data': data
+        })
+
+    def create(self, request):
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid():
+            name = serializer.validated_data.get('name')
+            message = f'Hello {name}!'
+            return Response({
+                'message': message
+            })
+        else:
+            return Response(
+                serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+    def retrieve(self, request, pk=None):
+        '''Handles getting an object'''
+        return Response({
+            'http_method': 'GET'
+        })
+
+    def update(self, request, pk=None):
+        '''Handles update of an object'''
+        return Response({
+            'http_method': 'PUT'
+        })
+    
+    def partial_update(self, request, pk=None):
+        '''Handles partial update of an object'''
+        return Response({
+            'http_method': 'PATCH'
+        })
+    
+    def destroy(self, request, pk=None):
+        '''Handles removing/deleting an object'''
+        return Response({
+            'http_method': 'DELETE'
+        })
+    
